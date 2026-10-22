@@ -19,216 +19,232 @@
   <style>
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background-color: #000000;
+      background-color: #0a0a0a;
       color: #ffffff;
       -webkit-font-smoothing: antialiased;
     }
     input, textarea, select {
-      background-color: #0a0a0a;
+      background-color: #121212;
       color: #ffffff;
     }
     input::placeholder, textarea::placeholder {
       color: #525252;
     }
+    /* Desktop App Frame Wrapper */
+    .app-shell {
+      max-width: 640px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background-color: #000000;
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+      border-left: 1px solid #171717;
+      border-right: 1px solid #171717;
+      display: flex;
+      flex-direction: column;
+    }
   </style>
 </head>
-<body class="min-h-screen bg-black text-white flex flex-col selection:bg-white selection:text-black">
+<body class="bg-[#0a0a0a] text-white selection:bg-white selection:text-black">
 
-  <!-- Toast Notification -->
-  <div id="toastContainer" class="fixed top-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+  <!-- App Shell Container (Looks like a sleek mobile app on desktop, expands naturally on mobile) -->
+  <div class="app-shell">
 
-  <!-- Top Bar (Tidal Monochrome Style) -->
-  <header class="border-b border-neutral-800 bg-black sticky top-0 z-30">
-    <div class="max-w-3xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-      <div class="flex items-center gap-3">
-        <!-- Minimalist Tidal-inspired geometric diamond mark -->
-        <div class="w-8 h-8 flex items-center justify-center border border-white/20 bg-neutral-950">
-          <svg class="w-4 h-4 text-white fill-current" viewBox="0 0 24 24">
-            <polygon points="12,3 16,7 12,11 8,7" />
-            <polygon points="6,9 10,13 6,17 2,13" />
-            <polygon points="18,9 22,13 18,17 14,13" />
-            <polygon points="12,15 15,18 12,21 9,18" />
-          </svg>
+    <!-- Toast Notification -->
+    <div id="toastContainer" class="fixed top-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- Top Bar (Tidal Monochrome Style) -->
+    <header class="border-b border-neutral-800 bg-black sticky top-0 z-30">
+      <div class="px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <!-- Minimalist Tidal-inspired geometric diamond mark -->
+          <div class="w-8 h-8 flex items-center justify-center border border-white/20 bg-neutral-950 shrink-0">
+            <svg class="w-4 h-4 text-white fill-current" viewBox="0 0 24 24">
+              <polygon points="12,3 16,7 12,11 8,7" />
+              <polygon points="6,9 10,13 6,17 2,13" />
+              <polygon points="18,9 22,13 18,17 14,13" />
+              <polygon points="12,15 15,18 12,21 9,18" />
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-sm font-extrabold tracking-[0.2em] uppercase text-white">DAILY DROP</h1>
+            <p class="text-[10px] text-neutral-400 tracking-wide">SPOTIFY • APPLE MUSIC • TIDAL</p>
+          </div>
         </div>
-        <div>
-          <h1 class="text-sm font-extrabold tracking-[0.2em] uppercase text-white">DAILY DROP</h1>
-          <p class="text-[11px] text-neutral-400 tracking-wide">SPOTIFY • APPLE MUSIC • TIDAL</p>
-        </div>
-      </div>
 
-      <div class="flex items-center gap-2">
-        <button id="btnCopyShareLink" type="button" class="px-3 py-2 text-xs font-semibold uppercase tracking-wider border border-neutral-700 hover:border-white text-neutral-200 hover:text-white transition">
-          Share Link
-        </button>
-        <button id="btnOpenAddModal" type="button" class="px-4 py-2 text-xs font-bold uppercase tracking-wider bg-white text-black hover:bg-neutral-200 transition">
-          + Add Song
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <!-- Main Content -->
-  <main class="flex-1 max-w-3xl w-full mx-auto px-4 sm:px-6 py-8 space-y-8">
-
-    <!-- 24-Hour 7:00 AM Cycle Status Bar -->
-    <section class="border border-neutral-800 bg-neutral-950 p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-      <div class="space-y-1">
         <div class="flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-white"></span>
-          <span class="text-xs font-bold uppercase tracking-widest text-neutral-400">Next Playlist Export: 7:00 AM</span>
+          <button id="btnCopyShareLink" type="button" class="px-3 py-2 text-xs font-semibold uppercase tracking-wider border border-neutral-700 hover:border-white text-neutral-200 hover:text-white transition">
+            Share
+          </button>
+          <button id="btnOpenAddModal" type="button" class="px-3.5 py-2 text-xs font-bold uppercase tracking-wider bg-white text-black hover:bg-neutral-200 transition">
+            + Add
+          </button>
         </div>
-        <p class="text-lg sm:text-xl font-bold tracking-tight text-white">
-          Time remaining: <span id="countdownText" class="font-mono">--h --m --s</span>
-        </p>
-        <p class="text-xs text-neutral-400">
-          One song per name every 24 hours. At 7:00 AM, today's submissions lock and export as the previous day's playlist.
-        </p>
       </div>
-      <div class="flex flex-col sm:items-end gap-2 shrink-0">
-        <button id="btnTrigger7AM" type="button" class="px-3 py-2 text-[11px] font-semibold uppercase tracking-wider border border-neutral-700 hover:border-white text-neutral-300 hover:text-white transition">
-          Run 7:00 AM Export Now
-        </button>
-      </div>
-    </section>
+    </header>
 
-    <!-- Collapsible / Inline "Add Song" Panel -->
-    <section id="addSongSection" class="border border-white bg-black p-6 space-y-5">
-      <div class="flex items-center justify-between border-b border-neutral-800 pb-3">
-        <div>
-          <h2 class="text-sm font-bold uppercase tracking-widest text-white">Add Song for Today</h2>
-          <p class="text-xs text-neutral-400 mt-0.5">Limit: 1 song per name. Submitting again with the same name replaces your song for today.</p>
-        </div>
-        <button id="btnCloseAddSection" type="button" class="text-xs uppercase tracking-wider text-neutral-400 hover:text-white">
-          Hide
-        </button>
-      </div>
+    <!-- Main Content -->
+    <main class="flex-1 w-full px-4 sm:px-6 py-6 space-y-6">
 
-      <form id="addSongForm" class="space-y-4" novalidate>
-        <!-- Song Link (Required) -->
-        <div>
-          <div class="flex items-center justify-between mb-1.5">
-            <label for="songLinkInput" class="text-xs font-bold uppercase tracking-wider text-neutral-300">Song Link (Spotify, Apple Music, or Tidal) *</label>
-            <span id="platformBadge" class="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 border border-neutral-800 text-neutral-400">Waiting for link</span>
+      <!-- 24-Hour 7:00 AM Cycle Status Bar -->
+      <section class="border border-neutral-800 bg-neutral-950 p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="space-y-1">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-white"></span>
+            <span class="text-xs font-bold uppercase tracking-widest text-neutral-400">Next Playlist Export: 7:00 AM</span>
           </div>
-          <input
-            id="songLinkInput"
-            type="url"
-            required
-            placeholder="Paste Spotify, Apple Music, or Tidal link..."
-            class="w-full px-3.5 py-2.5 text-sm border border-neutral-700 focus:border-white focus:outline-none transition font-mono"
-          />
+          <p class="text-lg sm:text-xl font-bold tracking-tight text-white">
+            Time remaining: <span id="countdownText" class="font-mono">--h --m --s</span>
+          </p>
+          <p class="text-xs text-neutral-400">
+            One song per name every 24 hours. At 7:00 AM, today's submissions lock and export.
+          </p>
+        </div>
+        <div class="flex flex-col sm:items-end gap-2 shrink-0">
+          <button id="btnTrigger7AM" type="button" class="px-3 py-2 text-[11px] font-semibold uppercase tracking-wider border border-neutral-700 hover:border-white text-neutral-300 hover:text-white transition">
+            Run 7:00 AM Export Now
+          </button>
+        </div>
+      </section>
+
+      <!-- Collapsible / Inline "Add Song" Panel -->
+      <section id="addSongSection" class="border border-white bg-black p-5 space-y-4">
+        <div class="flex items-center justify-between border-b border-neutral-800 pb-3">
+          <div>
+            <h2 class="text-sm font-bold uppercase tracking-widest text-white">Add Song for Today</h2>
+            <p class="text-xs text-neutral-400 mt-0.5">1 song per name. Re-submitting replaces your daily pick.</p>
+          </div>
+          <button id="btnCloseAddSection" type="button" class="text-xs uppercase tracking-wider text-neutral-400 hover:text-white">
+            Hide
+          </button>
         </div>
 
-        <!-- Name (Required) & Note (Optional) -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <form id="addSongForm" class="space-y-4" novalidate>
+          <!-- Song Link (Required) -->
           <div>
-            <label for="userNameInput" class="block text-xs font-bold uppercase tracking-wider text-neutral-300 mb-1.5">Your Name *</label>
+            <div class="flex items-center justify-between mb-1.5">
+              <label for="songLinkInput" class="text-xs font-bold uppercase tracking-wider text-neutral-300">Song Link *</label>
+              <span id="platformBadge" class="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 border border-neutral-800 text-neutral-400">Waiting for link</span>
+            </div>
             <input
-              id="userNameInput"
-              type="text"
+              id="songLinkInput"
+              type="url"
               required
-              maxlength="40"
-              placeholder="Enter your name"
-              class="w-full px-3.5 py-2.5 text-sm border border-neutral-700 focus:border-white focus:outline-none transition"
+              placeholder="Paste Spotify, Apple Music, or Tidal link..."
+              class="w-full px-3.5 py-2.5 text-sm border border-neutral-700 focus:border-white focus:outline-none transition font-mono"
             />
           </div>
+
+          <!-- Name (Required) & Note (Optional) -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="userNameInput" class="block text-xs font-bold uppercase tracking-wider text-neutral-300 mb-1.5">Your Name *</label>
+              <input
+                id="userNameInput"
+                type="text"
+                required
+                maxlength="40"
+                placeholder="Enter your name"
+                class="w-full px-3.5 py-2.5 text-sm border border-neutral-700 focus:border-white focus:outline-none transition"
+              />
+            </div>
+            <div>
+              <label for="songNoteInput" class="block text-xs font-bold uppercase tracking-wider text-neutral-400 mb-1.5">Note (Optional)</label>
+              <input
+                id="songNoteInput"
+                type="text"
+                maxlength="140"
+                placeholder="Optional note..."
+                class="w-full px-3.5 py-2.5 text-sm border border-neutral-800 focus:border-white focus:outline-none transition"
+              />
+            </div>
+          </div>
+
+          <div class="pt-1 flex items-center justify-end">
+            <button
+              id="btnSubmitSong"
+              type="submit"
+              class="w-full sm:w-auto px-6 py-2.5 text-xs font-bold uppercase tracking-widest bg-white text-black hover:bg-neutral-200 transition"
+            >
+              Submit Song
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- SECTION 1: 7:00 AM Ready Playlist -->
+      <section class="border border-neutral-800 bg-neutral-950 p-5 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-neutral-800 pb-4">
           <div>
-            <label for="songNoteInput" class="block text-xs font-bold uppercase tracking-wider text-neutral-400 mb-1.5">Note (Optional)</label>
-            <input
-              id="songNoteInput"
-              type="text"
-              maxlength="140"
-              placeholder="Optional note..."
-              class="w-full px-3.5 py-2.5 text-sm border border-neutral-800 focus:border-white focus:outline-none transition"
-            />
+            <div class="flex items-center gap-2.5">
+              <h2 class="text-sm font-bold uppercase tracking-widest text-white">7:00 AM Ready Playlist</h2>
+              <span id="readyCountBadge" class="text-xs font-mono px-2 py-0.5 border border-neutral-700 text-neutral-300">0</span>
+            </div>
+            <p id="readyCycleLabel" class="text-xs text-neutral-400 mt-0.5">
+              Exported every 24 hours at 7:00 AM.
+            </p>
+          </div>
+
+          <!-- Export Controls -->
+          <div class="flex flex-wrap items-center gap-2">
+            <button id="btnCopyLinksOnly" type="button" class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider bg-white text-black hover:bg-neutral-200 transition">
+              Copy Links
+            </button>
+            <button id="btnExportCSV" type="button" class="px-3 py-1.5 text-xs font-semibold uppercase tracking-wider border border-neutral-700 hover:border-white text-neutral-200 transition">
+              .CSV
+            </button>
+            <button id="btnExportTXT" type="button" class="px-3 py-1.5 text-xs font-semibold uppercase tracking-wider border border-neutral-700 hover:border-white text-neutral-200 transition">
+              .TXT
+            </button>
+            <button id="btnExportM3U" type="button" class="px-3 py-1.5 text-xs font-semibold uppercase tracking-wider border border-neutral-700 hover:border-white text-neutral-200 transition">
+              .M3U
+            </button>
           </div>
         </div>
 
-        <div class="pt-1 flex items-center justify-end gap-3">
-          <button
-            id="btnSubmitSong"
-            type="submit"
-            class="w-full sm:w-auto px-6 py-2.5 text-xs font-bold uppercase tracking-widest bg-white text-black hover:bg-neutral-200 transition"
-          >
-            Submit Song
-          </button>
+        <div id="readyPlaylistList" class="divide-y divide-neutral-900">
+          <!-- Populated dynamically by JS -->
         </div>
-      </form>
-    </section>
+      </section>
 
-    <!-- SECTION 1: 7:00 AM Ready Playlist (Previous Day's Submissions — Ready for Export) -->
-    <section class="border border-neutral-800 bg-neutral-950 p-6 space-y-5">
-      <div class="flex flex-wrap items-center justify-between gap-4 border-b border-neutral-800 pb-4">
-        <div>
-          <div class="flex items-center gap-2.5">
-            <h2 class="text-sm font-bold uppercase tracking-widest text-white">7:00 AM Ready Playlist (Previous Day)</h2>
-            <span id="readyCountBadge" class="text-xs font-mono px-2 py-0.5 border border-neutral-700 text-neutral-300">0</span>
+      <!-- SECTION 2: Today's Queue -->
+      <section class="border border-neutral-800 bg-black p-5 space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-neutral-900 pb-3">
+          <div>
+            <div class="flex items-center gap-2.5">
+              <h2 class="text-sm font-bold uppercase tracking-widest text-neutral-200">Today's Submitted Songs</h2>
+              <span id="todayCountBadge" class="text-xs font-mono px-2 py-0.5 border border-neutral-800 text-neutral-400">0</span>
+            </div>
+            <p class="text-xs text-neutral-500 mt-0.5">
+              Moves to the Ready Playlist at 7:00 AM.
+            </p>
           </div>
-          <p id="readyCycleLabel" class="text-xs text-neutral-400 mt-0.5">
-            Exported every 24 hours at 7:00 AM. Use the export buttons below to import or open in Spotify, Apple Music, or Tidal.
-          </p>
-        </div>
-
-        <!-- Export Controls -->
-        <div class="flex flex-wrap items-center gap-2">
-          <button id="btnCopyLinksOnly" type="button" class="px-3 py-1.5 text-xs font-bold uppercase tracking-wider bg-white text-black hover:bg-neutral-200 transition" title="Copy raw song URLs (paste directly into a Spotify playlist or playlist converter)">
-            Copy Links for Playlist Import
-          </button>
-          <button id="btnExportCSV" type="button" class="px-3 py-1.5 text-xs font-semibold uppercase tracking-wider border border-neutral-700 hover:border-white text-neutral-200 transition">
-            Export .CSV
-          </button>
-          <button id="btnExportTXT" type="button" class="px-3 py-1.5 text-xs font-semibold uppercase tracking-wider border border-neutral-700 hover:border-white text-neutral-200 transition">
-            Export .TXT
-          </button>
-          <button id="btnExportM3U" type="button" class="px-3 py-1.5 text-xs font-semibold uppercase tracking-wider border border-neutral-700 hover:border-white text-neutral-200 transition">
-            Export .M3U
+          <button id="btnClearAllData" type="button" class="text-[11px] uppercase tracking-wider text-neutral-500 hover:text-white transition">
+            Reset All
           </button>
         </div>
-      </div>
 
-      <div id="readyPlaylistList" class="divide-y divide-neutral-900">
-        <!-- Populated dynamically by JS -->
-      </div>
-    </section>
-
-    <!-- SECTION 2: Today's Queue (Collecting for Tomorrow's 7:00 AM Export) -->
-    <section class="border border-neutral-800 bg-black p-6 space-y-4">
-      <div class="flex flex-wrap items-center justify-between gap-2 border-b border-neutral-900 pb-3">
-        <div>
-          <div class="flex items-center gap-2.5">
-            <h2 class="text-sm font-bold uppercase tracking-widest text-neutral-200">Today's Submitted Songs</h2>
-            <span id="todayCountBadge" class="text-xs font-mono px-2 py-0.5 border border-neutral-800 text-neutral-400">0</span>
-          </div>
-          <p class="text-xs text-neutral-500 mt-0.5">
-            1 song per name. These songs will move into the Ready Playlist at 7:00 AM.
-          </p>
+        <div id="todaySubmissionsList" class="divide-y divide-neutral-900">
+          <!-- Populated dynamically by JS -->
         </div>
-        <button id="btnClearAllData" type="button" class="text-[11px] uppercase tracking-wider text-neutral-500 hover:text-white transition">
-          Reset All
-        </button>
+      </section>
+
+    </main>
+
+    <!-- Minimal Footer -->
+    <footer class="border-t border-neutral-900 py-4 text-center text-xs text-neutral-500 px-4">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-2">
+        <span>DAILY DROP • 1 Song Per Name</span>
+        <span>Add to iPhone Home Screen</span>
       </div>
+    </footer>
 
-      <div id="todaySubmissionsList" class="divide-y divide-neutral-900">
-        <!-- Populated dynamically by JS -->
-      </div>
-    </section>
-
-  </main>
-
-  <!-- Minimal Footer -->
-  <footer class="border-t border-neutral-900 py-5 text-center text-xs text-neutral-500">
-    <div class="max-w-3xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-      <span>DAILY DROP — 1 Song Per Name • 7:00 AM Daily Export</span>
-      <span>Add this page to your Home Screen to share the playlist link</span>
-    </div>
-  </footer>
+  </div>
 
   <script>
     (function () {
       const STORAGE_KEY = 'dailydrop_minimal_v1';
       const USER_NAME_KEY = 'dailydrop_username_v1';
 
-      // Calculate the current 7:00 AM 24-hour cycle key (YYYY-MM-DD of the cycle's start at 7:00 AM)
       function getCurrent7AMCycleKey(nowDate) {
         const d = nowDate ? new Date(nowDate) : new Date();
         const shifted = new Date(d.getTime() - 7 * 60 * 60 * 1000);
@@ -238,7 +254,6 @@
         return `${year}-${month}-${day}`;
       }
 
-      // Compute milliseconds until the next 7:00 AM local time
       function getMsUntilNext7AM() {
         const now = new Date();
         const next7AM = new Date(now);
@@ -253,14 +268,13 @@
         return {
           cycleKey: getCurrent7AMCycleKey(),
           lastExportedLabel: 'No export yet',
-          todaySongs: [],   // { id, name, url, platform, note, timestamp }
-          readyPlaylist: [] // { id, name, url, platform, note, timestamp }
+          todaySongs: [],  
+          readyPlaylist: [] 
         };
       }
 
       let state = loadState();
 
-      // Cross-tab sync
       let syncChannel = null;
       try {
         if (typeof BroadcastChannel !== 'undefined') {
@@ -275,7 +289,6 @@
       } catch (err) {}
 
       function loadState() {
-        // 1. Check shared URL hash (#drop=...)
         try {
           if (window.location.hash && window.location.hash.startsWith('#drop=')) {
             const encoded = window.location.hash.slice(6);
@@ -286,7 +299,6 @@
           }
         } catch (err) {}
 
-        // 2. Check localStorage
         try {
           const raw = localStorage.getItem(STORAGE_KEY);
           if (raw) {
@@ -366,7 +378,6 @@
         ta.remove();
       }
 
-      // Strictly support Spotify, Apple Music, and Tidal
       function detectPlatform(url) {
         const lower = (url || '').trim().toLowerCase();
         if (lower.includes('spotify.com') || lower.startsWith('spotify:')) return 'Spotify';
@@ -384,7 +395,6 @@
         };
       }
 
-      // Check if 24-hour 7:00 AM boundary has passed; if so, roll todaySongs -> readyPlaylist
       function check7AMRollover() {
         const currentKey = getCurrent7AMCycleKey();
         if (state.cycleKey !== currentKey) {
@@ -399,21 +409,17 @@
         }
       }
 
-      // Manual or automatic 7:00 AM export trigger
       function run7AMRolloverAndExport() {
         if (state.todaySongs.length === 0 && state.readyPlaylist.length === 0) {
           showToast('Add at least 1 song before exporting');
           return;
         }
         if (state.todaySongs.length > 0) {
-          const nowStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
           state.readyPlaylist = state.todaySongs.slice();
           state.todaySongs = [];
-          state.lastExportedLabel = `Ready (${nowStr} • 7:00 AM Export)`;
           saveState();
           renderAll();
         }
-        // Automatically download the exported playlist file (.txt / links) and copy links
         exportPlaylistFile('csv');
         showToast('7:00 AM Playlist Ready & Exported (.CSV)');
       }
@@ -477,8 +483,8 @@
 
         badge.textContent = String(list.length);
         label.textContent = list.length > 0
-          ? `${state.lastExportedLabel} • ${list.length} song${list.length === 1 ? '' : 's'} ready to export`
-          : 'No exported playlist for the previous day yet. Songs submitted today will export here at 7:00 AM.';
+          ? `${list.length} song${list.length === 1 ? '' : 's'} ready to export`
+          : 'No exported playlist yet. Songs submitted today will export here at 7:00 AM.';
 
         if (list.length === 0) {
           container.innerHTML = `
@@ -505,15 +511,6 @@
               <div class="flex items-center gap-1.5 pl-6 sm:pl-0 shrink-0">
                 <a href="${escapeAttr(item.url)}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider bg-white text-black hover:bg-neutral-200 transition">
                   Open ${escapeHtml(item.platform)} ↗
-                </a>
-                <a href="${escapeAttr(links.spotify)}" target="_blank" rel="noopener noreferrer" class="px-2 py-1 text-[10px] uppercase tracking-wider border border-neutral-800 hover:border-white text-neutral-400 hover:text-white transition">
-                  Spotify
-                </a>
-                <a href="${escapeAttr(links.apple)}" target="_blank" rel="noopener noreferrer" class="px-2 py-1 text-[10px] uppercase tracking-wider border border-neutral-800 hover:border-white text-neutral-400 hover:text-white transition">
-                  Apple
-                </a>
-                <a href="${escapeAttr(links.tidal)}" target="_blank" rel="noopener noreferrer" class="px-2 py-1 text-[10px] uppercase tracking-wider border border-neutral-800 hover:border-white text-neutral-400 hover:text-white transition">
-                  Tidal
                 </a>
               </div>
             </div>
@@ -598,13 +595,11 @@
         const noteInput = document.getElementById('songNoteInput');
         const platformBadge = document.getElementById('platformBadge');
 
-        // Load saved user name if available
         try {
           const savedName = localStorage.getItem(USER_NAME_KEY);
           if (savedName) nameInput.value = savedName;
         } catch (err) {}
 
-        // Open / focus Add Song
         document.getElementById('btnOpenAddModal').addEventListener('click', () => {
           addSection.classList.remove('hidden');
           linkInput.focus();
@@ -614,7 +609,6 @@
           addSection.classList.add('hidden');
         });
 
-        // Live platform badge check (Spotify, Apple Music, Tidal only)
         linkInput.addEventListener('input', () => {
           const val = linkInput.value.trim();
           if (!val) {
@@ -632,7 +626,6 @@
           }
         });
 
-        // Submit Song (1 song per name rule)
         document.getElementById('addSongForm').addEventListener('submit', (e) => {
           e.preventDefault();
           const url = linkInput.value.trim();
@@ -670,17 +663,16 @@
             timestamp: timeLabel
           };
 
-          // Strictly 1 song per name (case-insensitive)
           const existingIndex = state.todaySongs.findIndex(
             item => item.name.trim().toLowerCase() === name.toLowerCase()
           );
 
           if (existingIndex !== -1) {
             state.todaySongs[existingIndex] = newEntry;
-            showToast(`Replaced ${name}'s song for today (1 song per name)`);
+            showToast(`Replaced ${name}'s song for today`);
           } else {
             state.todaySongs.push(newEntry);
-            showToast(`Added ${name}'s song for the 7:00 AM export`);
+            showToast(`Added ${name}'s song for 7:00 AM export`);
           }
 
           saveState();
@@ -692,7 +684,6 @@
           platformBadge.className = 'text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 border border-neutral-800 text-neutral-400';
         });
 
-        // Remove song from today's queue
         document.getElementById('todaySubmissionsList').addEventListener('click', (e) => {
           const btn = e.target.closest('button');
           if (!btn || btn.dataset.action !== 'remove-today') return;
@@ -703,12 +694,10 @@
           showToast('Removed song');
         });
 
-        // Trigger 7:00 AM Export Now
         document.getElementById('btnTrigger7AM').addEventListener('click', () => {
           run7AMRolloverAndExport();
         });
 
-        // Export Buttons
         document.getElementById('btnCopyLinksOnly').addEventListener('click', () => {
           const list = state.readyPlaylist.length > 0 ? state.readyPlaylist : state.todaySongs;
           if (list.length === 0) {
@@ -731,12 +720,10 @@
           exportPlaylistFile('m3u');
         });
 
-        // Share Link Button
         document.getElementById('btnCopyShareLink').addEventListener('click', () => {
           copyToClipboard(getShareableUrl(), 'Shared playlist link copied');
         });
 
-        // Reset All
         document.getElementById('btnClearAllData').addEventListener('click', () => {
           state = createEmptyState();
           saveState();
@@ -745,7 +732,6 @@
         });
       }
 
-      // Initialize
       check7AMRollover();
       renderAll();
       updateCountdown();
